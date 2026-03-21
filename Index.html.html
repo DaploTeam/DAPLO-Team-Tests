@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RJS — Formularz aplikacyjny (mockup)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f0f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 48px;
+    }
+
+    .phone-frame {
+      background: #fff;
+      width: 100%;
+      max-width: 390px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    /* Mockup label */
+    .mockup-banner {
+      background: #fffbe6;
+      border-bottom: 1px solid #ffe58f;
+      padding: 8px 16px;
+      font-size: 12px;
+      color: #8a6d00;
+      text-align: center;
+    }
+
+    /* Header */
+    .header {
+      background: #32373c;
+      color: #fff;
+      padding: 28px 24px 24px;
+      position: relative;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #fff;
+    }
+
+    .logo span {
+      color: #ff5a00;
+    }
+
+    .header-divider {
+      width: 40px;
+      height: 3px;
+      background: #ff5a00;
+      margin-bottom: 10px;
+    }
+
+    .header-tagline {
+      font-size: 13px;
+      color: #aaa;
+      letter-spacing: 0.3px;
+    }
+
+    /* Progress */
+    .progress {
+      background: #32373c;
+      padding: 0 24px 20px;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: #4a5057;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #ff5a00;
+      transition: width 0.4s ease;
+    }
+
+    .progress-label {
+      font-size: 11px;
+      color: #888;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* Steps */
+    .step {
+      display: none;
+      padding: 28px 24px;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .step-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #ff5a00;
+      margin-bottom: 8px;
+    }
+
+    .step-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #32373c;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .step-subtitle {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* Kafelki stanowisk */
+    .position-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .position-card {
+      border: 2px solid #e0e0e0;
+      padding: 16px 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+      background: #fff;
+      position: relative;
+    }
+
+    .position-card:hover {
+      border-color: #ff5a00;
+      background: #fff8f5;
+    }
+
+    .position-card.selected {
+      border-color: #ff5a00;
+      background: #fff8f5;
+    }
+
+    .position-card .flag {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      line-height: 1;
+    }
+
+    .position-card .flag img {
+      width: 24px;
+      height: 16px;
+      display: block;
+      border: 1px solid #e0e0e0;
+    }
+
+    .position-card .icon {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .position-card .name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #32373c;
+      line-height: 1.3;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .position-card .location {
+      font-size: 11px;
+      color: #ff5a00;
+      margin-top: 4px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Formularz danych */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #32373c;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 0;
+      font-size: 15px;
+      color: #32373c;
+      outline: none;
+      transition: border-color 0.15s;
+      background: #fafafa;
+      font-family: inherit;
+    }
+
+    .form-group input:focus {
+      border-color: #ff5a00;
+      background: #fff;
+    }
+
+    .form-group input::placeholder {
+      color: #bbb;
+    }
+
+    /* Przyciski */
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: #32373c;
+      color: #fff;
+      border: 2px solid #32373c;
+      border-radius: 0;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.15s;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-family: inherit;
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: #ff5a00;
+      border-color: #ff5a00;
+    }
+
+    .btn-primary:disabled {
+      background: #e0e0e0;
+      border-color: #e0e0e0;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 14px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-back:hover { color: #ff5a00; }
+
+    /* Podsumowanie wyboru */
+    .selected-summary {
+      background: #fff8f5;
+      border: 2px solid #ff5a00;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .selected-summary .icon { font-size: 18px; }
+
+    .selected-summary .text {
+      font-size: 12px;
+      font-weight: 700;
+      color: #32373c;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .selected-summary .change {
+      margin-left: auto;
+      font-size: 11px;
+      color: #ff5a00;
+      cursor: pointer;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Sukces */
+    .success-screen {
+      padding: 36px 24px;
+      text-align: center;
+    }
+
+    .success-icon {
+      font-size: 52px;
+      margin-bottom: 16px;
+    }
+
+    .success-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #ff5a00;
+      margin-bottom: 8px;
+    }
+
+    .success-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #32373c;
+      margin-bottom: 10px;
+    }
+
+    .success-divider {
+      width: 40px;
+      height: 3px;
+      background: #ff5a00;
+      margin: 16px auto;
+    }
+
+    .success-text {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .success-note {
+      margin-top: 24px;
+      background: #32373c;
+      color: #fff;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .success-note strong {
+      color: #ff5a00;
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      font-size: 11px;
+      color: #bbb;
+      text-align: center;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+
+  <div class="mockup-banner">Mockup — RJS Formularz aplikacyjny</div>
+
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">R<span>JS</span></div>
+    </div>
+    <div class="header-divider"></div>
+    <div class="header-tagline">Praca w Polsce i Szwecji — budownictwo, montaż</div>
+  </div>
+
+  <div class="progress">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 50%"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">Krok 1 z 2</div>
+  </div>
+
+  <!-- Krok 1: Wybór stanowiska -->
+  <div class="step active" id="step1">
+    <div class="step-eyebrow">Aplikuj teraz</div>
+    <p class="step-title">Gdzie chcesz pracować?</p>
+    <p class="step-subtitle">Wybierz stanowisko które Cię interesuje.</p>
+
+    <div class="position-grid">
+      <div class="position-card" onclick="selectPosition(this, 'Monter', 'Szwecja', '🔧')">
+        <div class="flag"><img src="https://flagcdn.com/24x18/se.png" alt="Szwecja"></div>
+        <div class="icon">🔧</div>
+        <div class="name">Monter</div>
+        <div class="location">Szwecja</div>
+      </div>
+      <div class="position-card" onclick="selectPosition(this, 'Monter', 'Polska', '🔩')">
+        <div class="flag"><img src="https://flagcdn.com/24x18/pl.png" alt="Polska"></div>
+        <div class="icon">🔩</div>
+        <div class="name">Monter</div>
+        <div class="location">Polska</div>
+      </div>
+      <div class="position-card" onclick="selectPosition(this, 'Pomocnik montera', 'Szwecja', '🪛')">
+        <div class="flag"><img src="https://flagcdn.com/24x18/se.png" alt="Szwecja"></div>
+        <div class="icon">🪛</div>
+        <div class="name">Pomocnik montera</div>
+        <div class="location">Szwecja</div>
+      </div>
+      <div class="position-card" onclick="selectPosition(this, 'Pracownik budowlany', 'Polska', '🏗️')">
+        <div class="flag"><img src="https://flagcdn.com/24x18/pl.png" alt="Polska"></div>
+        <div class="icon">🏗️</div>
+        <div class="name">Pracownik budowlany</div>
+        <div class="location">Polska</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btnStep1" onclick="goToStep2()" disabled>
+      Dalej →
+    </button>
+  </div>
+
+  <!-- Krok 2: Dane kontaktowe -->
+  <div class="step" id="step2">
+    <div class="step-eyebrow">Krok 2 z 2</div>
+    <p class="step-title">Twoje dane</p>
+    <p class="step-subtitle">Zadzwonimy do Ciebie w ciągu 24 godzin.</p>
+
+    <div class="selected-summary" id="selectedSummary">
+      <span class="icon" id="summaryIcon"></span>
+      <span class="text" id="summaryText"></span>
+      <span class="change" onclick="goToStep1()">Zmień</span>
+    </div>
+
+    <div class="form-group">
+      <label>Imię</label>
+      <input type="text" placeholder="Jan" id="inputImie" />
+    </div>
+    <div class="form-group">
+      <label>Nazwisko</label>
+      <input type="text" placeholder="Kowalski" id="inputNazwisko" />
+    </div>
+    <div class="form-group">
+      <label>Numer telefonu</label>
+      <input type="tel" placeholder="500 123 456" id="inputTelefon" />
+    </div>
+    <div class="form-group">
+      <label>E-mail <span style="font-weight:400;color:#aaa;text-transform:none;letter-spacing:0">(opcjonalnie)</span></label>
+      <input type="email" placeholder="jan@gmail.com" id="inputEmail" />
+    </div>
+
+    <button class="btn-primary" onclick="submitForm()">
+      Wyślij zgłoszenie
+    </button>
+
+    <p class="disclaimer">Twoje dane są bezpieczne i nie będą udostępniane osobom trzecim.</p>
+
+    <button class="btn-back" onclick="goToStep1()">← Wróć</button>
+  </div>
+
+  <!-- Sukces -->
+  <div class="step" id="step3">
+    <div class="success-screen">
+      <div class="success-icon">✅</div>
+      <div class="success-eyebrow">Zgłoszenie przyjęte</div>
+      <p class="success-title">Dziękujemy!</p>
+      <div class="success-divider"></div>
+      <p class="success-text">Skontaktujemy się z Tobą najszybciej jak to możliwe.</p>
+      <div class="success-note">
+        Masz pytania? Zadzwoń:<br>
+        <strong>+48 XXX XXX XXX</strong>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let selectedPosition = null;
+
+  function selectPosition(el, name, location, icon) {
+    document.querySelectorAll('.position-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPosition = { name, location, icon };
+    document.getElementById('btnStep1').disabled = false;
+  }
+
+  function goToStep2() {
+    if (!selectedPosition) return;
+    document.getElementById('summaryIcon').textContent = selectedPosition.icon;
+    document.getElementById('summaryText').textContent = `${selectedPosition.name} — ${selectedPosition.location}`;
+    showStep('step2');
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressLabel').textContent = 'Krok 2 z 2';
+  }
+
+  function goToStep1() {
+    showStep('step1');
+    document.getElementById('progressFill').style.width = '50%';
+    document.getElementById('progressLabel').textContent = 'Krok 1 z 2';
+  }
+
+  function submitForm() {
+    const imie = document.getElementById('inputImie').value.trim();
+    const nazwisko = document.getElementById('inputNazwisko').value.trim();
+    const telefon = document.getElementById('inputTelefon').value.trim();
+    if (!imie || !nazwisko || !telefon) {
+      alert('Uzupełnij imię, nazwisko i numer telefonu.');
+      return;
+    }
+    showStep('step3');
+    document.querySelector('.progress').style.display = 'none';
+  }
+
+  function showStep(id) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+</script>
+
+</body>
+</html>
