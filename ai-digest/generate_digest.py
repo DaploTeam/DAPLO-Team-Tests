@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Weekly AI Digest Generator for Wiktor @ Daplo"""
 
-import anthropic
+import openai
 import datetime
 import os
 import pathlib
@@ -41,14 +41,14 @@ Format — TYLKO to, żaden wstęp ani podsumowanie:
 """
 
 def main():
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
     print(f"Generating AI digest for {TODAY}...")
-    message = client.messages.create(
-        model="claude-opus-4-6",
+    response = client.chat.completions.create(
+        model="gpt-4o",
         max_tokens=2048,
         messages=[{"role": "user", "content": PROMPT}],
     )
-    content = message.content[0].text
+    content = response.choices[0].message.content
     OUTPUT_FILE.write_text(content, encoding="utf-8")
     print(f"Saved: {OUTPUT_FILE}")
 
