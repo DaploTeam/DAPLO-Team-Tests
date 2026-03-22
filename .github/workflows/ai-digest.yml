@@ -1,0 +1,37 @@
+name: Weekly AI Digest
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Poniedziałek 8:00 CET (UTC+2 latem) / 7:00 CET zimą
+  workflow_dispatch:
+
+jobs:
+  generate-digest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install anthropic
+
+      - name: Generate AI digest
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python ai-digest/generate_digest.py
+
+      - name: Commit and push digest
+        run: |
+          git config user.name "AI Digest Bot"
+          git config user.email "bot@daplo.ai"
+          git add ai-digest/outputs/
+          git diff --staged --quiet || git commit -m "digest: AI weekly digest $(date +%Y-%m-%d)"
+          git push
