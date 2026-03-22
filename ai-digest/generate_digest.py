@@ -142,7 +142,7 @@ def main():
     print(f"Generating AI digest for {TODAY}...")
 
     response = oai.responses.create(
-        model="gpt-4o",
+        model="gpt-5.4-mini",
         tools=[{"type": "web_search_preview"}],
         input=PROMPT,
     )
