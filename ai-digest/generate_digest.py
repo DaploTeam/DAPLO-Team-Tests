@@ -22,38 +22,41 @@ Profil firmy Daplo:
 Przeszukaj WYŁĄCZNIE poniższe źródła i znajdź narzędzia/modele wydane lub zaktualizowane między {WEEK_AGO} a {TODAY}:
 
 ŹRÓDŁA (przeszukaj każde z osobna):
-1. news.ycombinator.com — najszybsze informacje ze społeczności tech
-2. huggingface.co/blog — nowe modele i biblioteki open source
-3. openai.com/blog — oficjalne ogłoszenia OpenAI
-4. anthropic.com/news — oficjalne ogłoszenia Anthropic
-5. github.com/trending — najgorętsze repozytoria tygodnia (filtr: AI/ML)
-6. techcrunch.com/category/artificial-intelligence — newsy ze świata AI
-7. venturebeat.com/ai — AI focused tech news
-8. the-decoder.com — szybkie newsy AI
-9. mistral.ai/news — oficjalne ogłoszenia Mistral
-10. ai.google.blog — ogłoszenia Google AI / DeepMind
+1. news.ycombinator.com
+2. huggingface.co/blog
+3. openai.com/blog
+4. anthropic.com/news
+5. github.com/trending
+6. techcrunch.com/category/artificial-intelligence
+7. venturebeat.com/ai
+8. the-decoder.com
+9. mistral.ai/news
+10. ai.google.blog
 
 ZASADY BEZWZGLĘDNE:
-- Każde narzędzie MUSI mieć potwierdzoną datę premiery/aktualizacji z ostatnich 7 dni — jeśli nie możesz jej znaleźć w powyższych źródłach, pomiń
-- Każde narzędzie MUSI mieć link do strony produktu, GitHub lub oficjalnej dokumentacji (nie do artykułu newsowego, nie do eventu)
-- NIE DODAWAJ konferencji, wydarzeń, webinarów, szkoleń — tylko produkty i modele
-- NIE WYMYŚLAJ — jeśli tydzień był spokojny, napisz mniej pozycji
+- Każde narzędzie MUSI mieć potwierdzoną datę z ostatnich 7 dni — jeśli nie możesz jej znaleźć, pomiń
+- Każde narzędzie MUSI mieć link do strony produktu lub GitHub (nie artykuł, nie event)
+- NIE DODAWAJ konferencji, wydarzeń, webinarów, szkoleń
+- NIE WYMYŚLAJ — jeśli brak danych, zostaw tabelę pustą
+- ZERO wstępów, komentarzy i wyjaśnień — zacznij od razu od pierwszego nagłówka
+- ZERO zdań w stylu "tydzień był skromny" lub "trzymałem się źródeł"
+- Każda komórka tabeli: max 1 zdanie, zwięźle
 
-Utwórz DWA ODDZIELNE zestawy danych w formacie tabelarycznym:
+Odpowiedź zbuduj WYŁĄCZNIE z poniższych sekcji:
 
-TABELA 1 — "Toolsy dla klientów Daplo" (narzędzia które możemy wdrożyć agencjom rekrutacyjnym):
-Kolumny: Nazwa | Data premiery | Co nowego | Dlaczego wdrożyć u klienta | Link | Akcja
+## Toolsy dla klientów Daplo
+| Nazwa | Data premiery | Co nowego | Dlaczego wdrożyć u klienta | Link | Akcja |
+|---|---|---|---|---|---|
 
-TABELA 2 — "Toolsy dla Daplo" (narzędzia które usprawnią naszą własną pracę jako firmy):
-Kolumny: Nazwa | Data premiery | Co nowego | Jak usprawni pracę Daplo | Link | Akcja
-
-Po tabelach:
+## Toolsy dla Daplo
+| Nazwa | Data premiery | Co nowego | Jak usprawni pracę Daplo | Link | Akcja |
+|---|---|---|---|---|---|
 
 ## Główny sygnał tygodnia
-[Jeden konkretny akapit — co zmienia perspektywę lub wymaga reakcji]
+[Jedno zdanie lub max dwa — konkretny wniosek]
 
 ## Do sprawdzenia w przyszłym tygodniu
-- [konkretne rzeczy]
+- [max 3 punkty]
 """
 
 def parse_table(lines):
@@ -102,19 +105,15 @@ def markdown_to_notion_blocks(text):
     i = 0
     while i < len(lines):
         line = lines[i]
-
         if line.startswith("# "):
             blocks.append({"object": "block", "type": "heading_1",
                 "heading_1": {"rich_text": [{"type": "text", "text": {"content": line[2:].replace("**", "")}}]}})
-
         elif line.startswith("## "):
             blocks.append({"object": "block", "type": "heading_2",
                 "heading_2": {"rich_text": [{"type": "text", "text": {"content": line[3:].replace("**", "")}}]}})
-
         elif line.startswith("### "):
             blocks.append({"object": "block", "type": "heading_3",
                 "heading_3": {"rich_text": [{"type": "text", "text": {"content": line[4:].replace("**", "")}}]}})
-
         elif line.startswith("|"):
             table_lines = []
             while i < len(lines) and lines[i].startswith("|"):
@@ -125,22 +124,18 @@ def markdown_to_notion_blocks(text):
             if table_block:
                 blocks.append(table_block)
             continue
-
         elif line.startswith("- "):
             blocks.append({"object": "block", "type": "bulleted_list_item",
                 "bulleted_list_item": {"rich_text": [{"type": "text", "text": {"content": line[2:].replace("**", "")}}]}})
-
         elif line.strip():
             blocks.append({"object": "block", "type": "paragraph",
                 "paragraph": {"rich_text": [{"type": "text", "text": {"content": line.replace("**", "")}}]}})
-
         i += 1
     return blocks
 
 def main():
     oai = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
     print(f"Generating AI digest for {TODAY}...")
-
     response = oai.responses.create(
         model="gpt-5.4-mini",
         tools=[{"type": "web_search_preview"}],
@@ -148,10 +143,8 @@ def main():
     )
     content = response.output_text
     print("Generated. Saving to Notion...")
-
     notion = notion_client.Client(auth=os.environ["NOTION_API_KEY"])
     blocks = markdown_to_notion_blocks(content)
-
     notion.pages.create(
         parent={"page_id": AI_RESEARCH_PAGE_ID},
         properties={"title": {"title": [{"type": "text", "text": {"content": TODAY}}]}},
