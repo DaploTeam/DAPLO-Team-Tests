@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
-"""Weekly AI Digest Generator for Wiktor @ Daplo"""
+"""Weekly AI Digest Generator for Wiktor @ Daplo — saves to Notion"""
 
 import openai
 import datetime
 import os
-import pathlib
+import notion_client
 
 TODAY = datetime.date.today().isoformat()
-OUTPUT_DIR = pathlib.Path(__file__).parent / "outputs"
-OUTPUT_DIR.mkdir(exist_ok=True)
-OUTPUT_FILE = OUTPUT_DIR / f"ai-digest-{TODAY}.md"
+AI_RESEARCH_PAGE_ID = "32b541d0-a83f-8037-84d2-c8d0bf7e4d07"
 
 PROMPT = f"""Dzisiaj jest {TODAY}.
 
@@ -40,17 +38,44 @@ Format — TYLKO to, żaden wstęp ani podsumowanie:
 - ...
 """
 
+def markdown_to_notion_blocks(text):
+    """Convert plain markdown text to Notion paragraph blocks."""
+    blocks = []
+    for line in text.split("\n"):
+        if line.startswith("# "):
+            blocks.append({"object": "block", "type": "heading_1", "heading_1": {"rich_text": [{"type": "text", "text": {"content": line[2:]}}]}})
+        elif line.startswith("## "):
+            blocks.append({"object": "block", "type": "heading_2", "heading_2": {"rich_text": [{"type": "text", "text": {"content": line[3:]}}]}})
+        elif line.startswith("- "):
+            blocks.append({"object": "block", "type": "bulleted_list_item", "bulleted_list_item": {"rich_text": [{"type": "text", "text": {"content": line[2:]}}]}})
+        elif line.startswith("|"):
+            blocks.append({"object": "block", "type": "paragraph", "paragraph": {"rich_text": [{"type": "text", "text": {"content": line}}]}})
+        elif line.strip():
+            blocks.append({"object": "block", "type": "paragraph", "paragraph": {"rich_text": [{"type": "text", "text": {"content": line}}]}})
+    return blocks
+
 def main():
-    client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    # Generate digest with OpenAI
+    oai = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
     print(f"Generating AI digest for {TODAY}...")
-    response = client.chat.completions.create(
+    response = oai.chat.completions.create(
         model="gpt-4o",
         max_tokens=2048,
         messages=[{"role": "user", "content": PROMPT}],
     )
     content = response.choices[0].message.content
-    OUTPUT_FILE.write_text(content, encoding="utf-8")
-    print(f"Saved: {OUTPUT_FILE}")
+    print("Generated. Saving to Notion...")
+
+    # Save to Notion
+    notion = notion_client.Client(auth=os.environ["NOTION_API_KEY"])
+    blocks = markdown_to_notion_blocks(content)
+
+    notion.pages.create(
+        parent={"page_id": AI_RESEARCH_PAGE_ID},
+        properties={"title": {"title": [{"type": "text", "text": {"content": TODAY}}]}},
+        children=blocks[:100],  # Notion API limit: 100 blocks per request
+    )
+    print(f"Done. Page '{TODAY}' created in AI Research.")
 
 if __name__ == "__main__":
     main()

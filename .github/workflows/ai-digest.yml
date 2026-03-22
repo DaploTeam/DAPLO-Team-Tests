@@ -21,11 +21,12 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install openai
+        run: pip install openai notion-client
 
       - name: Generate AI digest
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
         run: python ai-digest/generate_digest.py
 
       - name: Commit and push digest
