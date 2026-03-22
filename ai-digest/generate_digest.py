@@ -19,11 +19,23 @@ Profil firmy Daplo:
 - Stack: Python, API, n8n/Make
 - Mały zespół, ograniczony budżet — szukamy rzeczy dostępnych przez API lub SaaS z rozsądną ceną
 
-Przeszukaj internet i znajdź WYŁĄCZNIE PRAWDZIWE narzędzia/modele wydane lub zaktualizowane między {WEEK_AGO} a {TODAY}.
+Przeszukaj WYŁĄCZNIE poniższe źródła i znajdź narzędzia/modele wydane lub zaktualizowane między {WEEK_AGO} a {TODAY}:
+
+ŹRÓDŁA (przeszukaj każde z osobna):
+1. news.ycombinator.com — najszybsze informacje ze społeczności tech
+2. huggingface.co/blog — nowe modele i biblioteki open source
+3. openai.com/blog — oficjalne ogłoszenia OpenAI
+4. anthropic.com/news — oficjalne ogłoszenia Anthropic
+5. github.com/trending — najgorętsze repozytoria tygodnia (filtr: AI/ML)
+6. techcrunch.com/category/artificial-intelligence — newsy ze świata AI
+7. venturebeat.com/ai — AI focused tech news
+8. the-decoder.com — szybkie newsy AI
+9. mistral.ai/news — oficjalne ogłoszenia Mistral
+10. ai.google.blog — ogłoszenia Google AI / DeepMind
 
 ZASADY BEZWZGLĘDNE:
-- Każde narzędzie MUSI mieć datę premiery/aktualizacji z ostatnich 7 dni — jeśli nie możesz jej potwierdzić, pomiń narzędzie
-- Każde narzędzie MUSI mieć link do strony produktu, GitHub lub oficjalnej dokumentacji (nie do artykułu, nie do eventu)
+- Każde narzędzie MUSI mieć potwierdzoną datę premiery/aktualizacji z ostatnich 7 dni — jeśli nie możesz jej znaleźć w powyższych źródłach, pomiń
+- Każde narzędzie MUSI mieć link do strony produktu, GitHub lub oficjalnej dokumentacji (nie do artykułu newsowego, nie do eventu)
 - NIE DODAWAJ konferencji, wydarzeń, webinarów, szkoleń — tylko produkty i modele
 - NIE WYMYŚLAJ — jeśli tydzień był spokojny, napisz mniej pozycji
 
@@ -51,7 +63,7 @@ def parse_table(lines):
         if not stripped.startswith("|"):
             continue
         if set(stripped.replace("|", "").replace("-", "").replace(" ", "")) == set():
-            continue  # separator row
+            continue
         cells = [c.strip() for c in stripped.strip("|").split("|")]
         if any(cells):
             rows.append(cells)
@@ -66,7 +78,6 @@ def build_notion_table(rows):
         cells = []
         for i in range(table_width):
             text = row[i] if i < len(row) else ""
-            # Strip markdown bold
             text = text.replace("**", "")
             cells.append([{"type": "text", "text": {"content": text}}])
         notion_rows.append({
